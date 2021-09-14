@@ -34,9 +34,9 @@ def get_coef_t_values_linear_model(X,
     # プログラミングの命名規則からは外れているが、数学的にはこのように
     # アルファベット1字で表すことが多いので、今回はそれに倣った。
     n = X_arr.shape[0]
-    num_of_zero_coefs = sum(
-        [1 if np.abs(coef) <= zero_coef_threshold else 0 for coef in model.coef_])
-    p = X_arr.shape[1] - num_of_zero_coefs
+    is_not_zero_coefs = [False if np.abs(
+        coef) <= zero_coef_threshold else True for coef in model.coef_]
+    p = sum(is_not_zero_coefs)
     deg_of_freedom = n - p - 1
     # 誤差分散Veの算出
     ve = sse / deg_of_freedom
@@ -48,11 +48,15 @@ def get_coef_t_values_linear_model(X,
         np.dot(centerized_X_arr.T, centerized_X_arr))
 
     # 切片および各係数のt値の算出
-    _tmp = [X_means for _ in range(len(X_means))]
+    X_means_for_intercept_t = X_means[is_not_zero_coefs]
+    _tmp = [X_means_for_intercept_t for _ in range(
+        len(X_means_for_intercept_t))]
+    precision_matrix_for_intercept_t = precision_matrix[np.ix_(is_not_zero_coefs,
+                                                        is_not_zero_coefs)]
     mean_mat_1 = np.vstack(_tmp)
     mean_mat_2 = mean_mat_1.T
     intercept_variance = 1/n + \
-        np.sum(mean_mat_1 * mean_mat_2 * precision_matrix)
+        np.sum(mean_mat_1 * mean_mat_2 * precision_matrix_for_intercept_t)
     t_value_of_intercept = model.intercept_ / np.sqrt(intercept_variance * ve)
     t_values = model.coef_ / np.sqrt(np.diag(precision_matrix) * ve)
     t_values = np.insert(t_values, 0, t_value_of_intercept)
