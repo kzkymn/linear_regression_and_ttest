@@ -1,1 +1,1 @@
-from ._base import get_coef_t_values_linear_model
+from ._base import get_coef_t_values_linear_regression

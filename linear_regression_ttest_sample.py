@@ -2,13 +2,12 @@
 
 # %%
 from sklearn.datasets import load_iris, load_boston
-from sklearn.linear_model import LinearRegression, LassoLarsCV
+from sklearn.linear_model import LinearRegression, LassoLarsCV, LassoLars
 
-from skutils import get_coef_t_values_linear_model
+from skutils import get_coef_t_values_linear_regression
 
 # %%
-LOAD_BOSTON = True
-FIT_BY_LARS = True
+LOAD_BOSTON = False
 
 # %%
 if LOAD_BOSTON:
@@ -19,17 +18,14 @@ else:
     X = X[:, 1:4]
 
 # %%
-if FIT_BY_LARS:
-    model = LassoLarsCV()
-else:
-    model = LinearRegression()
+model = LinearRegression()
 model.fit(X, y)
 
 # %%
 # NOTE: sklearnの線形モデルの切片および説明変数のt値とp値を
 # 算出する。LinearRegressionでなくとも、例えばLassoLarsCVなどの
 # 線形モデルもmodelに渡せると思われる。(今はLassoLarsCVのみ確認済)
-t_values, p_values = get_coef_t_values_linear_model(X, y, model)
+t_values, p_values = get_coef_t_values_linear_regression(X, y, model)
 
 # %%
 model.intercept_
