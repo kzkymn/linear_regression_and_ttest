@@ -6,7 +6,8 @@ from sklearn.linear_model._base import LinearModel
 
 def get_coef_t_values_linear_model(X,
                                    y,
-                                   model: LinearModel):
+                                   model: LinearModel,
+                                   zero_coef_threshold=10**-10):
 
     # 本関数は基本的に下記を参考に実装
     # https://betashort-lab.com/%E3%83%87%E3%83%BC%E3%82%BF%E3%82%B5%E3%82%A4%E3%82%A8%E3%83%B3%E3%82%B9/%E7%B5%B1%E8%A8%88%E5%AD%A6/%E5%9B%9E%E5%B8%B0%E5%88%86%E6%9E%90%E3%81%AEt%E5%80%A4/
@@ -33,7 +34,9 @@ def get_coef_t_values_linear_model(X,
     # プログラミングの命名規則からは外れているが、数学的にはこのように
     # アルファベット1字で表すことが多いので、今回はそれに倣った。
     n = X_arr.shape[0]
-    p = X_arr.shape[1]
+    num_of_zero_coefs = sum(
+        [1 if np.abs(coef) <= zero_coef_threshold else 0 for coef in model.coef_])
+    p = X_arr.shape[1] - num_of_zero_coefs
     deg_of_freedom = n - p - 1
     # 誤差分散Veの算出
     ve = sse / deg_of_freedom
