@@ -1,18 +1,28 @@
 # NOTE: You should run this code with VSCode Jupyter extension.
 
 # %%
-from sklearn.datasets import load_iris
-from sklearn.linear_model import LinearRegression
+from sklearn.datasets import load_iris, load_boston
+from sklearn.linear_model import LinearRegression, LassoLarsCV
 
 from skutils import get_coef_t_values_linear_model
 
 # %%
-X, y = load_iris(return_X_y=True)
-y = X[:, 0]
-X = X[:, 1:4]
+LOAD_BOSTON = True
+FIT_BY_LARS = True
 
 # %%
-model = LinearRegression()
+if LOAD_BOSTON:
+    X, y = load_boston(return_X_y=True)
+else:
+    X, y = load_iris(return_X_y=True)
+    y = X[:, 0]
+    X = X[:, 1:4]
+
+# %%
+if FIT_BY_LARS:
+    model = LassoLarsCV()
+else:
+    model = LinearRegression()
 model.fit(X, y)
 
 # %%
